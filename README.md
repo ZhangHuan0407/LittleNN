@@ -49,12 +49,12 @@
 |    0    |    0    | 0      |
 
 ### Code
-- [XorSampleNN.cs](./LittleNN/LittleNN/UnitTest/XorSampleNN.cs)
+- [XorSampleNN.cs](./LittleNN/UnitTest/XorSampleNN.cs)
 - Default loss function use MSELoss
 - UnitTest.XorSampleNN must Compile with symbol `UNIT_TEST` or `DEBUG`
 - Change project compile target to Executable.(default is dll)
 ![Alt text](Sample/ProjectOptions.png?raw=true "ProjectOptions")
-- Test in [Program.cs](./LittleNN/LittleNN/Program.cs)
+- Test in [Program.cs](./LittleNN/Program.cs)
 ```
 void Main(string[] args)
 {
@@ -75,7 +75,7 @@ void Main(string[] args)
   - example: symbol is '0', float[] { 1, 0, 0,... }
 
 ### Code
-- [OCRNumberSampleNN.cs](./LittleNN/LittleNN/UnitTest/OCRNumberSampleNN.cs)
+- [OCRNumberSampleNN.cs](./LittleNN/UnitTest/OCRNumberSampleNN.cs)
 - UnitTest.OCRNumberSampleNN must Compile with symbol `UNIT_TEST` or `DEBUG`
 ```
 void Main(string[] args)
@@ -92,7 +92,7 @@ void Main(string[] args)
 
 ## Example3 Serialize
 ### Convert to Bin File
-- [SerizlizeSampleNN.cs](./LittleNN/LittleNN/UnitTest/SerizlizeSampleNN.cs)
+- [SerizlizeSampleNN.cs](./LittleNN/UnitTest/SerizlizeSampleNN.cs)
 - UnitTest.SerizlizeSampleNN must Compile with symbol `UNIT_TEST` or `DEBUG`
 - In the fact, due to reduce file size, Neuron.BiasDelta and Synapse.WeightDelta will be loss.
 - Serialize and deserizlize is equivalent to set Momentum 0 which made the train of nn slight difference in the first time.
@@ -106,7 +106,7 @@ network.SaveTo("xxx.bin");
 NeuralNetwork network2 = NeuralNetwork.LoadFrom("xxx.bin");
 ```
 ### Write & Read with Stream
-- [SerizlizeSampleNN.cs](./LittleNN/LittleNN/UnitTest/SerizlizeSampleNN.cs)
+- [SerizlizeSampleNN.cs](./LittleNN/UnitTest/SerizlizeSampleNN.cs)
 - UnitTest.SerizlizeSampleNN must Compile with symbol `UNIT_TEST` or `DEBUG`
 - NeuralNetwork.SaveTo, NeuralNetwork.LoadFrom implement by NeuralNetworkModel.
 ```
