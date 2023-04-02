@@ -23,7 +23,7 @@
   - Specifically, I have replaced double with float, removed the Winform reference, and ensured that the sample can be compiled and run on all platforms.
   - [trentsartain license](/trentsartain/Neural-Network/LICENSE)
 - As Microsoft no longer supports Visual Studio 2019, I updated the project TargetFramework to `net5.0`. You can clone the source code and modify it according to your needs.
-- All of the code is written in C#, and the project is licensed under MIT LICENSE.
+- All of the code is written in C#, and the project use the MIT LICENSE.
 - Multi-thread computing is not supported, and [complex network performance](#performance) is lower than TorchSharp.
 - If you need faster performance, it is recommended to use other popular deep learning frameworks such as TensorFlow, PyTorch, or Keras.
 
