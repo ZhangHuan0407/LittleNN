@@ -1,0 +1,8 @@
+https://learn.microsoft.com/zh-cn/dotnet/framework/app-domains/build-single-file-assembly
+I not good at cross-platform scripts.
+The simplest way is build single file assembly
+
+csc -out:myAssembly.exe myCode.cs
+csc -out:BuildZip.exe BuildZip.cs -r:System.IO.Compression.FileSystem.dll
+
+
