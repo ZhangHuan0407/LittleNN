@@ -28,13 +28,13 @@ namespace UnitTest
 			};
 
 			Random random = new Random();
-            for (int i = 0; i < 1000 * 1000; i++)
+            for (int i = 0; i < 500 * 1000; i++)
             {
 				// This sample code random pick one of data
 				// You should better foreach all of data
                 StandardData dataSet = dataSets[random.Next() % dataSets.Length];
 				float error = network.Train(dataSet);
-                if (i % (20 * 1000) == 0)
+                if (i % (10 * 1000) == 0)
 					// Expect: The error will decrease gradually
 					Console.WriteLine($"{i}   : {error}");
 			}

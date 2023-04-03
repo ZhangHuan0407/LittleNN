@@ -10,11 +10,13 @@ namespace LittleNN
     public class NeuralNetworkModel
     {
         private const int CurrentVersionHeadSize = 20;
+        private const int CurrentVersion = 2;
 
         /// <summary>
         /// bin data head area size
         /// </summary>
         public int HeadSize;
+        public int Version;
         /// <summary>
         /// <see cref="NeuralNetwork.LearnRate"/> backup
         /// </summary>
@@ -27,6 +29,11 @@ namespace LittleNN
         /// <see cref="NeuralNetwork"/> neuron count of each layer
         /// </summary>
         public int[] LayerRank;
+        /// <summary>
+        /// [HiddenLayer 1~HiddenLayer n OutputLayer][NeuronIndex]' ActivationsFunctionType
+        /// </summary>
+        public int[] ActivationsFunctionTypes;
+        public float[] ActivationsFunctionParameters;
         /// <summary>
         /// [HiddenLayer 1~HiddenLayer n OutputLayer][NeuronIndex]' Bias
         /// <para>
@@ -57,12 +64,15 @@ namespace LittleNN
         /// </summary>
         public void CopyFrom(NeuralNetwork neuralNetwork)
         {
+            Version = CurrentVersion;
             LearnRate = neuralNetwork.LearnRate;
             Momentum = neuralNetwork.Momentum;
             HeadSize = CurrentVersionHeadSize;
 
             int layerCount = neuralNetwork.HiddenLayers.Length + 2;
             LayerRank = new int[layerCount];
+            ActivationsFunctionTypes = new int[layerCount - 1];
+            ActivationsFunctionParameters = new float[layerCount - 1];
             NeuronBias = new float[layerCount - 1][];
             SynapseWeight = new float[layerCount - 1][];
 
@@ -76,6 +86,8 @@ namespace LittleNN
             {
                 neuronLayer = neuralNetwork.HiddenLayers[i];
                 LayerRank[layerIndex] = neuronLayer.NeuronsCount;
+                ActivationsFunctionTypes[layerIndex - 1] = (int)neuronLayer.ActType;
+                ActivationsFunctionParameters[layerIndex - 1] = neuronLayer.ActParameter;
                 NeuronBias[layerIndex - 1] = CopyLayerNeuronToArray(neuronLayer);
                 SynapseWeight[layerIndex] = CopyLayerSynapseToArray(neuronLayer);
                 layerIndex++;
@@ -83,6 +95,8 @@ namespace LittleNN
 
             neuronLayer = neuralNetwork.OutputLayer;
             LayerRank[layerIndex] = neuronLayer.NeuronsCount;
+            ActivationsFunctionTypes[layerIndex - 1] = (int)neuronLayer.ActType;
+            ActivationsFunctionParameters[layerIndex - 1] = neuronLayer.ActParameter;
             NeuronBias[layerIndex - 1] = CopyLayerNeuronToArray(neuronLayer);
         }
         private float[] CopyLayerNeuronToArray(NeuronLayer neuronLayer)
@@ -122,10 +136,11 @@ namespace LittleNN
         {
             neuralNetwork.LearnRate = LearnRate;
             neuralNetwork.Momentum = Momentum;
-            neuralNetwork.InputLayer = new NeuronLayer(LayerRank[0]);
+            neuralNetwork.InputLayer = new NeuronLayer(LayerRank[0], ActivationsFunctionType.InputLayer, 0f);
             neuralNetwork.HiddenLayers = new NeuronLayer[LayerRank.Length - 2];
-            neuralNetwork.OutputLayer = new NeuronLayer(LayerRank[LayerRank.Length - 1]);
-
+            neuralNetwork.OutputLayer = new NeuronLayer(neuronsCount: LayerRank[LayerRank.Length - 1],
+                                                        type: (ActivationsFunctionType)ActivationsFunctionTypes[LayerRank.Length - 2],
+                                                        parameter: ActivationsFunctionParameters[LayerRank.Length - 2]);
             NeuronLayer neuronLayer = neuralNetwork.InputLayer;
             float[] neuronBias;
             for (int i = 0; i < neuronLayer.NeuronsCount; i++)
@@ -134,7 +149,9 @@ namespace LittleNN
             }
             for (int i = 0; i < neuralNetwork.HiddenLayers.Length; i++)
             {
-                neuronLayer = neuralNetwork.HiddenLayers[i] = new NeuronLayer(LayerRank[i + 1]);
+                neuronLayer = neuralNetwork.HiddenLayers[i] = new NeuronLayer(neuronsCount: LayerRank[i + 1],
+                                                                              type: (ActivationsFunctionType)ActivationsFunctionTypes[i],
+                                                                              parameter: ActivationsFunctionParameters[i]);
                 neuronBias = NeuronBias[i];
                 int inputLayerRank = LayerRank[i];
                 int outputLayerRank = LayerRank[i + 2];
@@ -199,12 +216,14 @@ namespace LittleNN
                 float[] neuronBias = NeuronBias[calculateTimes];
                 bLayerValue = ArrayPool<float>.Shared.Rent(bLayerNeuronCount);
                 int synapsePoint = 0;
+                ActivationsFunctionType actType = (ActivationsFunctionType)ActivationsFunctionTypes[calculateTimes];
+                float actParameter = ActivationsFunctionParameters[calculateTimes];
                 for (int nIndex = 0; nIndex < bLayerNeuronCount; nIndex++)
                 {
                     float sum = 0f;
                     for (int i = 0; i < aLayerNeuronCount; i++)
                         sum += synapseWeight[synapsePoint++] * aLayerValue[i];
-                    bLayerValue[nIndex] = Sigmoid.Output(sum + neuronBias[nIndex]);
+                    bLayerValue[nIndex] = ActivationsFunctions.Output(actType, sum + neuronBias[nIndex], actParameter);
                 }
             }
             ArrayPool<float>.Shared.Return(bLayerValue);
@@ -222,6 +241,7 @@ namespace LittleNN
                 throw new ArgumentException(nameof(stream));
             long headStartPosition = stream.Position;
             WriteInt(stream, HeadSize);
+            WriteInt(stream, Version);
             WriteFloat(stream, LearnRate);
             WriteFloat(stream, Momentum);
             if (headStartPosition + HeadSize - stream.Position != 0)
@@ -234,6 +254,11 @@ namespace LittleNN
             WriteInt(stream, layerRankLength);
             for (int i = 0; i < layerRankLength; i++)
                 WriteInt(stream, LayerRank[i]);
+            // ActivationsFunctionTypes
+            for (int i = 0; i < ActivationsFunctionTypes.Length; i++)
+                WriteInt(stream, ActivationsFunctionTypes[i]);
+            // ActivationsFunctionParameters
+            WriteFloatArray(stream, ActivationsFunctionParameters);
             // NeuronBias
             for (int i = 0; i < layerRankLength - 1; i++)
                 WriteFloatArray(stream, NeuronBias[i]);
@@ -251,6 +276,7 @@ namespace LittleNN
             byte[] buffer = new byte[4];
             long headStartPosition = stream.Position;
             HeadSize = ReadInt(stream, buffer);
+            Version = ReadInt(stream, buffer);
             LearnRate = ReadFloat(stream, buffer);
             Momentum = ReadFloat(stream, buffer);
             stream.Position = headStartPosition + HeadSize;
@@ -259,6 +285,12 @@ namespace LittleNN
             LayerRank = new int[layerRankLength];
             for (int i = 0; i < layerRankLength; i++)
                 LayerRank[i] = ReadInt(stream, buffer);
+            // ActivationsFunctionTypes
+            ActivationsFunctionTypes = new int[layerRankLength - 1];
+            for (int i = 0; i < layerRankLength - 1; i++)
+                ActivationsFunctionTypes[i] = ReadInt(stream, buffer);
+            // ActivationsFunctionParameters
+            ActivationsFunctionParameters = ReadFloatArray(stream, layerRankLength - 1);
             // NeuronBias
             NeuronBias = new float[layerRankLength - 1][];
             for (int i = 0; i < layerRankLength - 1; i++)

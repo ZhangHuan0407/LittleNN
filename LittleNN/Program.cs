@@ -13,6 +13,9 @@ namespace LittleNN
             //UnitTest.OCRNumberSampleNN.ConvergeUnitTest();
             //UnitTest.OCRNumberSampleNN.WriteNumberGrayValue();
             //UnitTest.SerizlizeSampleNN.IOUnitTest();
+            //UnitTest.SerizlizeSampleNN.IOUnitTest_CustomParameter();
+            //UnitTest.ActivationFunctionUnitTest.MathUnitTest();
+            //UnitTest.XorSampleNN2.ReLUUnitTest();
         }
     }
 }

@@ -43,20 +43,22 @@ namespace LittleNN
             return neuron;
         }
         /// <summary>
-        /// Create a Neuron whitch in <see cref="NeuralNetwork.HiddenLayers"/>,
+        /// Create a Neuron whitch in <see cref="NeuralNetwork.HiddenLayers"/> or <see cref="NeuralNetwork.OutputLayer"/>,
 		/// new Neuron connect to each Neuron of inputLayer before return
         /// <para>InputSynapses:√</para>
         /// <para>OutputSynapses:√</para>
         /// <param name="index">new in Neuron sequence index in outputLayer layer</param>
         /// <param name="inputLayer">the layer connect with outputLayer</param>
-        /// <param name="outputLayer">new Neuron will locate in outputLayer layer</param>
+        /// <param name="outputLayer">new Neuron will locate in outputLayer layer or null</param>
         /// </summary>
-        public static Neuron CreateHiddenNeuron(int index, NeuronLayer inputLayer, NeuronLayer outputLayer)
+        public static Neuron CreateNeuronAndConnect(int index, NeuronLayer inputLayer, NeuronLayer outputLayer)
         {
             Neuron neuron = new Neuron();
-            //neuron.IndexInLayer = index;
             neuron.InputSynapses = new Synapse[inputLayer.NeuronsCount];
-            neuron.OutputSynapses = new Synapse[outputLayer.NeuronsCount];
+            if (outputLayer == default)
+                neuron.OutputSynapses = Array.Empty<Synapse>();
+            else
+                neuron.OutputSynapses = new Synapse[outputLayer.NeuronsCount];
             for (int i = 0; i < inputLayer.NeuronsCount; i++)
             {
                 Neuron inputNeuron = inputLayer.Neurons[i];
@@ -73,39 +75,16 @@ namespace LittleNN
         /// <param name="index">new in Neuron sequence index in outputLayer layer</param>
         /// <param name="outputLayer">new Neuron will locate in outputLayer layer</param>
         /// </summary>
-		public static Neuron CreateInputNeuron(int index, NeuronLayer outputLayer)
+		public static Neuron CreateInputLayerNeuron(int index, NeuronLayer outputLayer)
         {
             Neuron neuron = new Neuron();
-            //neuron.IndexInLayer = index;
             neuron.InputSynapses = Array.Empty<Synapse>();
             neuron.OutputSynapses = new Synapse[outputLayer.NeuronsCount];
             return neuron;
         }
-        /// <summary>
-        /// Create a Neuron whitch in <see cref="NeuralNetwork.OutputLayer"/>,
-		/// new Neuron connect to each Neuron of inputLayer before return
-		/// <para>InputSynapses:√</para>
-		/// <para>OutputSynapses:x</para>
-        /// </summary>
-        /// <param name="index">new in Neuron sequence index in outputLayer layer</param>
-        /// <param name="inputLayer">the layer connect with outputLayer</param>
-        public static Neuron CreateOutputNeuron(int index, NeuronLayer inputLayer)
-        {
-            Neuron neuron = new Neuron();
-            //neuron.IndexInLayer = index;
-            neuron.InputSynapses = new Synapse[inputLayer.NeuronsCount];
-            for (int i = 0; i < inputLayer.NeuronsCount; i++)
-            {
-                Neuron inputNeuron = inputLayer.Neurons[i];
-                var synapse = new Synapse(inputNeuron, neuron);
-                inputNeuron.OutputSynapses[index] = synapse;
-                neuron.InputSynapses[i] = synapse;
-            }
-            return neuron;
-        }
 
 #pragma warning disable CS1591
-        public float CalculateValue()
+        public float CalculateValue(NeuronLayer layer)
         {
             int inputSynapsesCount = InputSynapses.Length;
             float sum = 0f;
@@ -114,7 +93,7 @@ namespace LittleNN
                 Synapse synapse = InputSynapses[i];
                 sum += synapse.Weight * synapse.InputNeuron.Value;
             }
-            return Value = Sigmoid.Output(sum + Bias);
+            return Value = ActivationsFunctions.Output(layer.ActType, sum + Bias, layer.ActParameter);
         }
 
         public float CalculateError(float target)
@@ -122,7 +101,7 @@ namespace LittleNN
             return target - Value;
         }
 
-        public float CalculateGradient(float? target = null)
+        public float CalculateGradient(NeuronLayer layer, float? target = null)
         {
             float loss;
             if (target == null)
@@ -137,7 +116,7 @@ namespace LittleNN
             }
             else
                 loss = CalculateError(target.Value);
-            return Gradient = loss * Sigmoid.Derivative(Value);
+            return Gradient = loss * ActivationsFunctions.Derivative(layer.ActType, Value, layer.ActParameter);
         }
 
         public void UpdateWeights(float learnRate, float momentum)

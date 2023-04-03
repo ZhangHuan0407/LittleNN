@@ -9,6 +9,11 @@ namespace LittleNN
     /// </summary>
     partial class NeuralNetwork
     {
+        private static readonly object LockObject = new object();
+        /// <summary>
+        /// Avoid seed synchronization
+        /// </summary>
+        private static int RandomOffset;
         [ThreadStatic]
         private static Random m_Random;
         /// <summary>
@@ -17,8 +22,35 @@ namespace LittleNN
         public static float GetRandom()
         {
             if (m_Random is null)
-                m_Random = new Random();
+            {
+                lock (LockObject)
+                {
+                    if (RandomOffset == 0)
+                        m_Random = new Random();
+                    else
+                        m_Random = new Random(RandomOffset);
+                    RandomOffset = m_Random.Next() + m_Random.Next();
+                }
+            }
             return 1.999998f * (float)m_Random.NextDouble() - 0.999999f;
+        }
+        public static float[] RandomN(int count)
+        {
+            if (m_Random is null)
+            {
+                lock (LockObject)
+                {
+                    if (RandomOffset == 0)
+                        m_Random = new Random();
+                    else
+                        m_Random = new Random(RandomOffset);
+                    RandomOffset = m_Random.Next() + m_Random.Next();
+                }
+            }
+            float[] result = new float[count];
+            for (int i = 0; i < count; i++)
+                result[i] = (float)m_Random.NextDouble();
+            return result;
         }
 
         /// <summary>
