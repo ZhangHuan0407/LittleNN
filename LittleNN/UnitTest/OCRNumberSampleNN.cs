@@ -73,6 +73,7 @@ namespace UnitTest
             lossStringBuilder.Append('\n');
 
             Random random = new Random();
+            Stopwatch trainStopWatch = Stopwatch.StartNew();
             for (int i = 0; i < NumEpochs; i++)
             {
                 float totalLoss = 0f;
@@ -89,7 +90,10 @@ namespace UnitTest
                     lossStringBuilder.Append($"{totalLoss / DatasSet.Count}").Append(',');
                 }
                 if (i % 200 == 199)
-                    Console.WriteLine($"{i}  :{totalLoss / DatasSet.Count}");
+                {
+                    Console.WriteLine($"{i}  :{totalLoss / DatasSet.Count} {trainStopWatch.ElapsedMilliseconds}");
+                    trainStopWatch.Restart();
+                }
             }
             lossStringBuilder.Length -= 1;
             lossStringBuilder.Append('\n');
