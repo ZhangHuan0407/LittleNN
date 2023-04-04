@@ -8,8 +8,18 @@ namespace LittleNN
     /// </summary>
     public static class ActivationsFunctions
     {
+        /// <summary>
+        /// Extend more custom <see cref="ActivationsFunctionType"/>, and extend <see cref="Output"/> by add delegate to <see cref="OutputExtension_Handle"/>
+        /// </summary>
         public delegate float ActivationsFunction(ActivationsFunctionType type, float x, float parameter);
+        /// <summary>
+        /// Extend more custom <see cref="ActivationsFunctionType"/>, and extend <see cref="Output"/> by add delegate to <see cref="OutputExtension_Handle"/>
+        /// </summary>
         public static event ActivationsFunction OutputExtension_Handle;
+        /// <summary>
+        /// Calculate activation function result
+        /// <para>If type is not build-in, will invoke <see cref="OutputExtension_Handle"/> to get activation</para>
+        /// </summary>
         public static float Output(ActivationsFunctionType type, float x, float parameter)
         {
             switch (type)
@@ -59,8 +69,18 @@ namespace LittleNN
             }
         }
 
+        /// <summary>
+        /// Extend more custom <see cref="ActivationsFunctionType"/>, and extend <see cref="Output"/> by add delegate to <see cref="DerivativeExtension_Handle"/>
+        /// </summary>
         public delegate float DerivativeFunction(ActivationsFunctionType type, float x, float parameter);
+        /// <summary>
+        /// Extend more custom <see cref="ActivationsFunctionType"/>, and extend <see cref="Output"/> by add delegate to <see cref="DerivativeExtension_Handle"/>
+        /// </summary>
         public static event DerivativeFunction DerivativeExtension_Handle;
+        /// <summary>
+        /// Calculate derivative function result
+        /// <para>If type is not build-in, will invoke <see cref="DerivativeExtension_Handle"/> to get derivative</para>
+        /// </summary>
         public static float Derivative(ActivationsFunctionType type, float x, float parameter)
         {
             switch (type)

@@ -5,8 +5,9 @@ using LittleNN;
 
 namespace UnitTest
 {
-    public static class XorSampleNN2
+	internal static class XorSampleNN2
 	{
+#pragma warning disable CS1591
 		public static void ReLUUnitTest()
 		{
 			Console.WriteLine("XorSampleNN2.ReLUUnitTest");
@@ -38,6 +39,7 @@ namespace UnitTest
 					Console.WriteLine($"{i}   : {error}");
 			}
 		}
+#pragma warning restore CS1591
 	}
 }
 #endif

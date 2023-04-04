@@ -44,7 +44,7 @@ namespace LittleNN
         }
 
         /// <summary>
-        /// Create a new neural network with special layer size and default parameters.
+        /// Create a new neural network with specified layer size and default parameters.
         /// <para><see cref="NeuronLayer.ActType"/>all synapse choose Sigmoid as activation function</para>
         /// </summary>
 		public NeuralNetwork(int inputSize, int[] hiddenSizes, int outputSize, float learnRate = 0.02f, float momentum = 0.75f)
@@ -56,6 +56,9 @@ namespace LittleNN
             sequential.Add(Sequential.Neural("output layer", outputSize));
             SetNeuralNetwork(sequential, learnRate, momentum);
         }
+        /// <summary>
+        /// Create a new neural network with specified layer size and default parameters.
+        /// </summary>
         public NeuralNetwork(List<Sequential> sequential, float learnRate, float momentum) =>
             SetNeuralNetwork(sequential, learnRate, momentum);
 

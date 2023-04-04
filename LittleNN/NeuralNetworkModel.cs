@@ -16,6 +16,9 @@ namespace LittleNN
         /// bin data head area size
         /// </summary>
         public int HeadSize;
+        /// <summary>
+        /// You can not use model in accross version
+        /// </summary>
         public int Version;
         /// <summary>
         /// <see cref="NeuralNetwork.LearnRate"/> backup
@@ -33,6 +36,9 @@ namespace LittleNN
         /// [HiddenLayer 1~HiddenLayer n OutputLayer][NeuronIndex]' ActivationsFunctionType
         /// </summary>
         public int[] ActivationsFunctionTypes;
+        /// <summary>
+        /// [HiddenLayer 1~HiddenLayer n OutputLayer][NeuronIndex]' ActivationsFunctionType
+        /// </summary>
         public float[] ActivationsFunctionParameters;
         /// <summary>
         /// [HiddenLayer 1~HiddenLayer n OutputLayer][NeuronIndex]' Bias

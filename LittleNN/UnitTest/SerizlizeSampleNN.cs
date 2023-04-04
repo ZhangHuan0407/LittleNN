@@ -115,6 +115,7 @@ namespace UnitTest
 			Console.WriteLine("equal");
 		}
 
+#pragma warning disable CS1591
 		public static void IOUnitTest_CustomParameter()
 		{
 			Console.WriteLine("SerizlizeSampleNN.IOUnitTest_CustomParameter");
@@ -175,6 +176,7 @@ namespace UnitTest
 			}
 			Console.WriteLine("all equal");
 		}
+#pragma warning restore CS1591
 	}
 }
 #endif

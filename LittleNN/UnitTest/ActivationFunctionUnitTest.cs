@@ -4,7 +4,7 @@ using LittleNN;
 
 namespace UnitTest
 {
-    public static class ActivationFunctionUnitTest
+    internal static class ActivationFunctionUnitTest
     {
         /// <summary>
         /// https://keisan.casio.com/exec/system/15236005297459

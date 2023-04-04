@@ -34,7 +34,11 @@ namespace LittleNN
             }
             return 1.999998f * (float)m_Random.NextDouble() - 0.999999f;
         }
-        public static float[] RandomN(int count)
+        /// <summary>
+        /// Create a random value array with specified length
+        /// </summary>
+        /// <param name="length">the length of random value array</param>
+        public static float[] RandomN(int length)
         {
             if (m_Random is null)
             {
@@ -47,8 +51,8 @@ namespace LittleNN
                     RandomOffset = m_Random.Next() + m_Random.Next();
                 }
             }
-            float[] result = new float[count];
-            for (int i = 0; i < count; i++)
+            float[] result = new float[length];
+            for (int i = 0; i < length; i++)
                 result[i] = (float)m_Random.NextDouble();
             return result;
         }
