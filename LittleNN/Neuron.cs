@@ -86,9 +86,9 @@ namespace LittleNN
 #pragma warning disable CS1591
         public float CalculateValue(NeuronLayer layer)
         {
-            int inputSynapsesCount = InputSynapses.Length;
+            Synapse[] inputSynapses = InputSynapses;
             float sum = 0f;
-            for (int i = 0; i < inputSynapsesCount; i++)
+            for (int i = 0; i < inputSynapses.Length; i++)
             {
                 Synapse synapse = InputSynapses[i];
                 sum += synapse.Weight * synapse.InputNeuron.Value;
@@ -107,8 +107,8 @@ namespace LittleNN
             if (target == null)
             {
                 loss = 0f;
-                int outputSynapsesCount = OutputSynapses.Length;
-                for (int i = 0; i < outputSynapsesCount; i++)
+                Synapse[] outputSynapses = OutputSynapses;
+                for (int i = 0; i < outputSynapses.Length; i++)
                 {
                     Synapse synapse = OutputSynapses[i];
                     loss += synapse.OutputNeuron.Gradient * synapse.Weight;
@@ -125,8 +125,8 @@ namespace LittleNN
             BiasDelta = learnRate * Gradient;
             Bias += BiasDelta + momentum * prevDelta;
 
-            int inputSynapsesLength = InputSynapses.Length;
-            for (int i = 0; i < inputSynapsesLength; i++)
+            Synapse[] inputSynapses = InputSynapses;
+            for (int i = 0; i < inputSynapses.Length; i++)
             {
                 Synapse synapse = InputSynapses[i];
                 prevDelta = synapse.WeightDelta;
