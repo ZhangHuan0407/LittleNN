@@ -101,7 +101,7 @@ namespace LittleNN
             return target - Value;
         }
 
-        public float CalculateGradient(NeuronLayer layer, float? target = null)
+        public float CalculateGradient(NeuronLayer layer, float? target)
         {
             float loss;
             if (target == null)

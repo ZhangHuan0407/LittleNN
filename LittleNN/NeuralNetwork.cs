@@ -145,7 +145,7 @@ namespace LittleNN
             {
                 NeuronLayer hiddenLayer = HiddenLayers[layerIndex];
                 for (int nIndex = 0; nIndex < hiddenLayer.NeuronsCount; nIndex++)
-                    hiddenLayer.Neurons[nIndex].CalculateGradient(hiddenLayer);
+                    hiddenLayer.Neurons[nIndex].CalculateGradient(hiddenLayer, null);
             }
             for (int layerIndex = HiddenLayers.Length - 1; layerIndex >= 0; layerIndex--)
             {

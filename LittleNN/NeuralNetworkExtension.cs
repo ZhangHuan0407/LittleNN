@@ -9,7 +9,7 @@ namespace LittleNN
     /// </summary>
     partial class NeuralNetwork
     {
-        private static readonly object LockObject = new object();
+        private static readonly object LockObject;
         /// <summary>
         /// Avoid seed synchronization
         /// </summary>
@@ -25,10 +25,7 @@ namespace LittleNN
             {
                 lock (LockObject)
                 {
-                    if (RandomOffset == 0)
-                        m_Random = new Random();
-                    else
-                        m_Random = new Random(RandomOffset);
+                    m_Random = new Random(RandomOffset);
                     RandomOffset = m_Random.Next() + m_Random.Next();
                 }
             }
@@ -44,10 +41,7 @@ namespace LittleNN
             {
                 lock (LockObject)
                 {
-                    if (RandomOffset == 0)
-                        m_Random = new Random();
-                    else
-                        m_Random = new Random(RandomOffset);
+                    m_Random = new Random(RandomOffset);
                     RandomOffset = m_Random.Next() + m_Random.Next();
                 }
             }
@@ -55,6 +49,13 @@ namespace LittleNN
             for (int i = 0; i < length; i++)
                 result[i] = (float)m_Random.NextDouble();
             return result;
+        }
+
+        static NeuralNetwork()
+        {
+            LockObject = new object();
+            m_Random = new Random();
+            RandomOffset = m_Random.Next();
         }
 
         /// <summary>
