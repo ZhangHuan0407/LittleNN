@@ -125,10 +125,12 @@ namespace UnitTest
 			{
 				(ActivationsFunctionType.LeakyReLU, 0.01f),
 				(ActivationsFunctionType.LeakyReLU, 0.02f),
-				// ReLU will make loss NaN, so i ignore this ActivationsFunctionType
-				// I guess no one uses it?
-				//(ActivationsFunctionType.ReLU, null),
+                (ActivationsFunctionType.ReLU, null),
+                (ActivationsFunctionType.Sigmoid, null),
 				(ActivationsFunctionType.Sigmoid, null),
+				(ActivationsFunctionType.Sigmoid, null),
+				(ActivationsFunctionType.Softsign, null),
+				(ActivationsFunctionType.Softsign, null),
 				(ActivationsFunctionType.Softsign, null),
 			};
 
@@ -170,7 +172,8 @@ namespace UnitTest
 						target[i] = inputInt[i] ^ inputInt[i + 1];
 					float lossTemplate = neuralNetworkTemplate.Train(input, target);
 					float lossMirror = neuralNetworkMirror.Train(input, target);
-					if (lossTemplate != lossMirror || lossTemplate == 0f)
+					if (lossTemplate != lossMirror &&
+						!(float.IsNaN(lossTemplate) && float.IsNaN(lossMirror)))
 						throw new Exception("NeuralNetwork is not sync");
                 }
 			}
