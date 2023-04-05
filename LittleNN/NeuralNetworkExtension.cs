@@ -71,7 +71,8 @@ namespace LittleNN
                 {
                     StandardData dataSet = standardDatas[j];
                     ForwardPropagate(dataSet.Inputs);
-                    BackPropagate(dataSet.Targets);
+                    OptimizerBackward(dataSet.Targets);
+                    OptimizerStep();
                 }
             }
         }
@@ -86,8 +87,9 @@ namespace LittleNN
 		public float Train(float[] input, float[] target)
         {
             this.ForwardPropagate(input);
-            this.BackPropagate(target);
-            float loss = LossFuntion.MSELoss(this.CopyEval(), target);
+            this.OptimizerBackward(target);
+            this.OptimizerStep();
+            float loss = LossFuntion.MSELoss(this.CopyEvaluation(), target);
             return loss;
         }
 
@@ -97,7 +99,7 @@ namespace LittleNN
         public float[] Forward(float[] inputs)
         {
             ForwardPropagate(inputs);
-            return CopyEval();
+            return CopyEvaluation();
         }
 
         /// <summary>

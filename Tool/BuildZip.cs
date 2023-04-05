@@ -10,7 +10,7 @@ namespace BuildZip
     internal static class Program
     {
         public static string ZipName = "LittleNN-{Version}.zip";
-        public static readonly string ProjectDirectory = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName.Replace("\\", " / ");
+        public static readonly string ProjectDirectory = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName.Replace("\\", "/");
         public static readonly string CSProjectFilePath = ProjectDirectory + "/LittleNN/LittleNN.csproj";
         public static readonly string OutputPath = ProjectDirectory + "/Output";
 

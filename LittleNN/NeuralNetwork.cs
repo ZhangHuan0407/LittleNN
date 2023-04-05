@@ -123,7 +123,11 @@ namespace LittleNN
                 OutputLayer.Neurons[i] = Neuron.CreateNeuronAndConnect(i, lastNeuronsLayer, default);
         }
 
-        private void ForwardPropagate(float[] inputs)
+        /// <summary>
+        /// Use inputs value and calculate a targets value
+        /// <para>Invoke <see cref="CopyEvaluation"/> to get the copy of the neural network</para>
+        /// </summary>
+        public void ForwardPropagate(float[] inputs)
         {
             for (int index = 0; index < InputLayer.NeuronsCount; index++)
                 InputLayer.Neurons[index].Value = inputs[index];
@@ -137,7 +141,11 @@ namespace LittleNN
                 OutputLayer.Neurons[index].CalculateValue(OutputLayer);
         }
 
-        private void BackPropagate(float[] targets)
+        /// <summary>
+        /// Use targets value and <see cref="NeuralNetwork"/> current <see cref="Neuron"/> value to calculate <see cref="Neuron.Gradient"/>
+        /// </summary>
+        /// <param name="targets">The expected output value of the neural network</param>
+        public void OptimizerBackward(float[] targets)
         {
             for (int index = 0; index < OutputLayer.NeuronsCount; index++)
                 OutputLayer.Neurons[index].CalculateGradient(OutputLayer, targets[index]);
@@ -147,6 +155,12 @@ namespace LittleNN
                 for (int nIndex = 0; nIndex < hiddenLayer.NeuronsCount; nIndex++)
                     hiddenLayer.Neurons[nIndex].CalculateGradient(hiddenLayer, null);
             }
+        }
+        /// <summary>
+        /// Use <see cref="Neuron.Gradient"/> modified weights and value in current <see cref="NeuralNetwork"/>
+        /// </summary>
+        public void OptimizerStep()
+        {
             for (int layerIndex = HiddenLayers.Length - 1; layerIndex >= 0; layerIndex--)
             {
                 NeuronLayer hiddenLayer = HiddenLayers[layerIndex];
@@ -157,7 +171,10 @@ namespace LittleNN
                 OutputLayer.Neurons[index].UpdateWeights(LearnRate, Momentum);
         }
 
-        private float[] CopyEval()
+        /// <summary>
+        /// Copy the output value of the neural network
+        /// </summary>
+        public float[] CopyEvaluation()
         {
             float[] eval = new float[OutputLayer.NeuronsCount];
             for (int i = 0; i < OutputLayer.NeuronsCount; i++)
