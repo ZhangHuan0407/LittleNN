@@ -339,11 +339,11 @@ namespace LittleNN
                 buffer[1] = buffer[2];
                 buffer[2] = temp;
             }
-            stream.Write(buffer);
+            stream.Write(buffer, 0, buffer.Length);
         }
         private static float ReadFloat(Stream stream, byte[] buffer)
         {
-            stream.Read(buffer);
+            stream.Read(buffer, 0, buffer.Length);
             if (!BitConverter.IsLittleEndian)
             {
                 byte temp = buffer[0];
@@ -353,7 +353,7 @@ namespace LittleNN
                 buffer[1] = buffer[2];
                 buffer[2] = temp;
             }
-            float value = BitConverter.ToSingle(buffer);
+            float value = BitConverter.ToSingle(buffer, 0);
             return value;
         }
 
@@ -369,11 +369,11 @@ namespace LittleNN
                 buffer[1] = buffer[2];
                 buffer[2] = temp;
             }
-            stream.Write(buffer);
+            stream.Write(buffer, 0, buffer.Length);
         }
         private static int ReadInt(Stream stream, byte[] buffer)
         {
-            stream.Read(buffer);
+            stream.Read(buffer, 0, buffer.Length);
             if (!BitConverter.IsLittleEndian)
             {
                 byte temp = buffer[0];
@@ -383,7 +383,7 @@ namespace LittleNN
                 buffer[1] = buffer[2];
                 buffer[2] = temp;
             }
-            int value = BitConverter.ToInt32(buffer);
+            int value = BitConverter.ToInt32(buffer, 0);
             return value;
         }
 

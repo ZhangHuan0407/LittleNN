@@ -40,33 +40,33 @@ namespace LittleNN
                         throw new Exception($"Unknown ActivationsFunction type: {type}");
                     return value.Value;
             }
-            static float LeakyRelu(float x, float negativeSlope)
+            float LeakyRelu(float xValue, float negativeSlope)
             {
-                if (x >= 0f)
-                    return x;
+                if (xValue >= 0f)
+                    return xValue;
                 else
-                    return x * negativeSlope;
+                    return xValue * negativeSlope;
             }
-            static float ReLU(float x)
+            float ReLU(float xValue)
             {
-                if (x >= 0f)
-                    return x;
+                if (xValue >= 0f)
+                    return xValue;
                 else
                     return 0f;
             }
-            static float Sigmoid(float x)
+            float Sigmoid(float xValue)
             {
-                if (x < -45f)
+                if (xValue < -45f)
                     return 0f;
-                else if (x > 45f)
+                else if (xValue > 45f)
                     return 1f;
                 else
-                    return 1f / (1f + MathF.Exp(-x));
+                    return 1f / (1f + MathF.Exp(-xValue));
             }
-            static float Softsign(float x)
+            float Softsign(float xValue)
             {
-                float abs = x > 0f ? x : -x;
-                return x / (1f + abs);
+                float abs = xValue > 0f ? xValue : -xValue;
+                return xValue / (1f + abs);
             }
         }
 
@@ -102,26 +102,26 @@ namespace LittleNN
                         throw new Exception($"Unknown DerivativeFunction type: {type}");
                     return value.Value;
             }
-            static float LeakyRelu(float x, float negativeSlope)
+            float LeakyRelu(float xValue, float negativeSlope)
             {
-                if (x >= 0f)
+                if (xValue >= 0f)
                     return 1f;
                 else
                     return negativeSlope;
             }
-            static float ReLU(float x)
+            float ReLU(float xValue)
             {
-                if (x >= 0f)
+                if (xValue >= 0f)
                     return 1f;
                 else
                     return 0f;
             }
-            static float Sigmoid(float x) => x * (1 - x);
-            static float Softsign(float x)
+            float Sigmoid(float xValue) => xValue * (1 - xValue);
+            float Softsign(float xValue)
             {
-                float abs = x > 0f ? x : -x;
-                x = (1f + abs);
-                return 1f / (x * x);
+                float abs = xValue > 0f ? xValue : -xValue;
+                xValue = (1f + abs);
+                return 1f / (xValue * xValue);
             }
         }
     }

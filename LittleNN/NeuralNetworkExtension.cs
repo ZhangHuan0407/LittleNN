@@ -107,22 +107,26 @@ namespace LittleNN
         /// </summary>
         public void SaveTo(string filePath)
         {
-            using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            NeuralNetworkModel model = new NeuralNetworkModel();
-            model.CopyFrom(this);
-            model.Write(fileStream);
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                NeuralNetworkModel model = new NeuralNetworkModel();
+                model.CopyFrom(this);
+                model.Write(fileStream);
+            }
         }
         /// <summary>
         /// Read target file and deserialize <see cref="NeuralNetwork"/> from bin data.
         /// </summary>
         public static NeuralNetwork LoadFrom(string filePath)
         {
-            using FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            NeuralNetworkModel model = new NeuralNetworkModel();
-            model.Read(fileStream);
-            NeuralNetwork neuralNetwork = new NeuralNetwork();
-            model.Override(neuralNetwork);
-            return neuralNetwork;
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                NeuralNetworkModel model = new NeuralNetworkModel();
+                model.Read(fileStream);
+                NeuralNetwork neuralNetwork = new NeuralNetwork();
+                model.Override(neuralNetwork);
+                return neuralNetwork;
+            }
         }
     }
 }

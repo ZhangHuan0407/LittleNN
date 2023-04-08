@@ -54,7 +54,9 @@ namespace LittleNN
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(NeuronsCount, Neurons, ActType, ActParameter);
+            int h = NeuronsCount.GetHashCode() ^ Neurons.GetHashCode();
+            h += ActType.GetHashCode() ^ ActParameter.GetHashCode();
+            return h;
         }
 
         public static bool operator ==(NeuronLayer left, NeuronLayer right)
