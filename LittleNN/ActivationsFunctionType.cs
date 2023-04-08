@@ -4,7 +4,6 @@ namespace LittleNN
     /// <summary>
     /// There are implement some of pytorch activation functions.
     /// </summary>
-    [Serializable]
     public enum ActivationsFunctionType : int
     {
         /// <summary>

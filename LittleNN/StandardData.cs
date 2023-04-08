@@ -7,7 +7,6 @@ namespace LittleNN
     /// but use <see cref="StandardData"/> is not necessary.
 	/// <para>This class just a wrapper of input and target's data</para>
     /// </summary>
-    [Serializable]
     public class StandardData
     {
         /// <summary>

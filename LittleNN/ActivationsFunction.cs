@@ -61,7 +61,7 @@ namespace LittleNN
                 else if (xValue > 45f)
                     return 1f;
                 else
-                    return 1f / (1f + MathF.Exp(-xValue));
+                    return 1f / (1f + (float)Math.Exp(-xValue));
             }
             float Softsign(float xValue)
             {

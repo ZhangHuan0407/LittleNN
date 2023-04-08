@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers;
 using System.IO;
 
 namespace LittleNN
@@ -213,14 +212,15 @@ namespace LittleNN
             // translate value from [calculateTimes]layer to [calculateTimes+1]layer
             for (int calculateTimes = 0; calculateTimes < LayerRank.Length - 1; calculateTimes++)
             {
-                if (aLayerValue != null && aLayerValue != input)
-                    ArrayPool<float>.Shared.Return(aLayerValue);
+                //if (aLayerValue != null && aLayerValue != input)
+                //    ArrayPool<float>.Shared.Return(aLayerValue);
                 aLayerValue = bLayerValue;
                 int aLayerNeuronCount = LayerRank[calculateTimes];
                 int bLayerNeuronCount = LayerRank[calculateTimes + 1];
                 float[] synapseWeight = SynapseWeight[calculateTimes];
                 float[] neuronBias = NeuronBias[calculateTimes];
-                bLayerValue = ArrayPool<float>.Shared.Rent(bLayerNeuronCount);
+                // ArrayPool<float>.Shared.Rent(bLayerNeuronCount);
+                bLayerValue = new float[bLayerNeuronCount];
                 int synapsePoint = 0;
                 ActivationsFunctionType actType = (ActivationsFunctionType)ActivationsFunctionTypes[calculateTimes];
                 float actParameter = ActivationsFunctionParameters[calculateTimes];
@@ -232,7 +232,7 @@ namespace LittleNN
                     bLayerValue[nIndex] = ActivationsFunctions.Output(actType, sum + neuronBias[nIndex], actParameter);
                 }
             }
-            ArrayPool<float>.Shared.Return(bLayerValue);
+            //ArrayPool<float>.Shared.Return(bLayerValue);
             float[] eval = new float[LayerRank[LayerRank.Length - 1]];
             Array.Copy(bLayerValue, eval, eval.Length);
             return eval;
