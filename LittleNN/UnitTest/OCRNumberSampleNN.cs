@@ -45,7 +45,7 @@ namespace UnitTest
                         throw new Exception();
                     float[] sample = new float[bytes.Length];
                     for (int i = 0; i < bytes.Length; i++)
-                        sample[i] = bytes[i] / 254.99f;
+                        sample[i] = bytes[i] / 255f;
                     samplesList.Add(sample);
                 }
             }
@@ -120,7 +120,7 @@ namespace UnitTest
                 float[] template = pair.Value[0];
                 for (int i = 0; i < template.Length; i++)
                 {
-                    int value = (int)(template[i] * 255.99f);
+                    int value = (int)(template[i] * 255f);
                     Console.Write(value.ToString().PadLeft(4));
                     if (i % Width == Width - 1)
                         Console.WriteLine();
