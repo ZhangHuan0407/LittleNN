@@ -32,6 +32,15 @@ namespace LittleNN
         public NeuronLayer OutputLayer;
 
         private CalculateThread m_CalculateThread;
+        /// <summary>
+        /// Logical calculation load thread
+        /// <para>Do not modified while performing any task</para>
+        /// </summary>
+        public CalculateThread CalculateThread
+        {
+            get => m_CalculateThread;
+            set => m_CalculateThread = value;
+        }
 
         /// <summary>
         /// Create an empty instance

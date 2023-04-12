@@ -8,12 +8,15 @@ namespace LittleNN
     /// </summary>
     public class CalculateThread
     {
-        public const int AmountOfComputation = 5000 * 10;
+        public const int AmountOfComputation = 6400 * 10;
 
         private static object m_Lock = new object();
         private static CalculateThread m_IdleThread;
 
-        internal static CalculateThread IdleThread
+        /// <summary>
+        /// get recycle thread or new thread
+        /// </summary>
+        public static CalculateThread IdleThread
         {
             get
             {
@@ -158,7 +161,7 @@ namespace LittleNN
         /// <summary>
         /// Set thread is abort, and expect it run to exit
         /// </summary>
-        internal void Abort()
+        public void Abort()
         {
             m_IsAbort = true;
             m_WorkloadSignalEvent.Set();
