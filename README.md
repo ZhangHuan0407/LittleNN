@@ -167,9 +167,9 @@ calculateThread.Abort();                                      // mark thread abo
 |                      | [TourchSharp-cpu](https://github.com/dotnet/TorchSharp) | LittleNN         |
 | -------------------- | ------------------------------------------------------- | ---------------- |
 | Architecture         | X86-64✓ Arm64x                                          | .net runtime 5.0 |
-| Windows Library Size | torch_cpu.dll 240MB, are you kidding me?                | less than 30KB   |
-| OSX Library Size     | torch_cpu.dylib 390MB                                   | less than 30KB   |
-| Linix Library Size   | torch_cpu.so 520MB                                      | less than 30KB   |
+| Windows Library Size | torch_cpu.dll 240MB, are you kidding me?                | less than 50KB   |
+| OSX Library Size     | torch_cpu.dylib 390MB                                   | less than 50KB   |
+| Linix Library Size   | torch_cpu.so 520MB                                      | less than 50KB   |
 
 ## Performance
 - Example2 OCR Number Recognize
