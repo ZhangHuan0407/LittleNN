@@ -31,6 +31,8 @@ namespace LittleNN
         /// </summary>
         public NeuronLayer OutputLayer;
 
+        private CalculateThread m_CalculateThread;
+
         /// <summary>
         /// Create an empty instance
         /// </summary>
@@ -123,22 +125,74 @@ namespace LittleNN
                 OutputLayer.Neurons[i] = Neuron.CreateNeuronAndConnect(i, lastNeuronsLayer, default);
         }
 
+        public void SetMultiThread(bool enable)
+        {
+            if (enable)
+            {
+                if (m_CalculateThread != null && m_CalculateThread.IsAbort)
+                    m_CalculateThread = null;
+                m_CalculateThread = m_CalculateThread ??= CalculateThread.IdleThread;
+            }
+            else
+            {
+                if (m_CalculateThread != null)
+                {
+                    if (!m_CalculateThread.IsAbort)
+                        CalculateThread.IdleThread = m_CalculateThread;
+                    m_CalculateThread = null;
+                }
+            }
+        }
+
         /// <summary>
         /// Use inputs value and calculate a targets value
         /// <para>Invoke <see cref="CopyEvaluation"/> to get the copy of the neural network</para>
         /// </summary>
         public void ForwardPropagate(float[] inputs)
         {
-            for (int index = 0; index < InputLayer.NeuronsCount; index++)
-                InputLayer.Neurons[index].Value = inputs[index];
+            Neuron[] array = InputLayer.Neurons;
+            for (int index = 0; index < array.Length; index++)
+                array[index].Value = inputs[index];
+            int workSplitIndex = 0;
             for (int layerIndex = 0; layerIndex < HiddenLayers.Length; layerIndex++)
             {
                 NeuronLayer hiddenLayer = HiddenLayers[layerIndex];
-                for (int nIndex = 0; nIndex < hiddenLayer.NeuronsCount; nIndex++)
-                    hiddenLayer.Neurons[nIndex].CalculateValue(hiddenLayer);
+                NeuronLayer aLayer = layerIndex == 0 ? InputLayer : HiddenLayers[layerIndex - 1];
+                workSplitIndex = 0;
+                if (m_CalculateThread != null && (hiddenLayer.NeuronsCount * aLayer.NeuronsCount * 10 > CalculateThread.AmountOfComputation))
+                {
+                    workSplitIndex = hiddenLayer.NeuronsCount / 2;
+                    m_CalculateThread.SetTask(() =>
+                    {
+                        int workEndIndex = workSplitIndex;
+                        Neuron[] taskArray = hiddenLayer.Neurons;
+                        for (int index = 0; index < workEndIndex && index < taskArray.Length; index++)
+                            taskArray[index].CalculateValue(hiddenLayer);
+                    });
+                }
+                array = hiddenLayer.Neurons;
+                for (int index = workSplitIndex; index < array.Length; index++)
+                    array[index].CalculateValue(hiddenLayer);
+                if (workSplitIndex != 0)
+                    m_CalculateThread.WaitUntilFinish();
             }
-            for (int index = 0; index < OutputLayer.NeuronsCount; index++)
-                OutputLayer.Neurons[index].CalculateValue(OutputLayer);
+            workSplitIndex = 0;
+            if (m_CalculateThread != null && (OutputLayer.NeuronsCount * HiddenLayers[HiddenLayers.Length - 1].NeuronsCount * 10 > CalculateThread.AmountOfComputation))
+            {
+                workSplitIndex = OutputLayer.NeuronsCount / 2;
+                m_CalculateThread.SetTask(() =>
+                {
+                    int workEndIndex = workSplitIndex;
+                    Neuron[] taskArray = OutputLayer.Neurons;
+                    for (int index = 0; index < workEndIndex && index < taskArray.Length; index++)
+                        taskArray[index].CalculateValue(OutputLayer);
+                });
+            }
+            array = OutputLayer.Neurons;
+            for (int index = workSplitIndex; index < array.Length; index++)
+                array[index].CalculateValue(OutputLayer);
+            if (workSplitIndex != 0)
+                m_CalculateThread.WaitUntilFinish();
         }
 
         /// <summary>
@@ -147,13 +201,30 @@ namespace LittleNN
         /// <param name="targets">The expected output value of the neural network</param>
         public void OptimizerBackward(float[] targets)
         {
-            for (int index = 0; index < OutputLayer.NeuronsCount; index++)
-                OutputLayer.Neurons[index].CalculateGradient(OutputLayer, targets[index]);
+            Neuron[] array = OutputLayer.Neurons;
+            for (int index = 0; index < array.Length; index++)
+                array[index].CalculateGradient(OutputLayer, targets[index]);
             for (int layerIndex = HiddenLayers.Length - 1; layerIndex >= 0; layerIndex--)
             {
                 NeuronLayer hiddenLayer = HiddenLayers[layerIndex];
-                for (int nIndex = 0; nIndex < hiddenLayer.NeuronsCount; nIndex++)
-                    hiddenLayer.Neurons[nIndex].CalculateGradient(hiddenLayer, null);
+                NeuronLayer bLayer = layerIndex == HiddenLayers.Length - 1 ? OutputLayer : HiddenLayers[layerIndex + 1];
+                int workSplitIndex = 0;
+                if (m_CalculateThread != null && (hiddenLayer.NeuronsCount * bLayer.NeuronsCount * 9 > CalculateThread.AmountOfComputation))
+                {
+                    workSplitIndex = hiddenLayer.NeuronsCount / 2;
+                    m_CalculateThread.SetTask(() =>
+                    {
+                        int workEndIndex = workSplitIndex;
+                        Neuron[] taskArray = hiddenLayer.Neurons;
+                        for (int index = 0; index < workEndIndex && index < taskArray.Length; index++)
+                            taskArray[index].CalculateGradient(hiddenLayer, null);
+                    });
+                }
+                array = hiddenLayer.Neurons;
+                for (int index = workSplitIndex; index < array.Length; index++)
+                    array[index].CalculateGradient(hiddenLayer, null);
+                if (workSplitIndex != 0)
+                    m_CalculateThread.WaitUntilFinish();
             }
         }
         /// <summary>
@@ -161,14 +232,47 @@ namespace LittleNN
         /// </summary>
         public void OptimizerStep()
         {
+            int workSplitIndex = 0;
+            Neuron[] array;
             for (int layerIndex = HiddenLayers.Length - 1; layerIndex >= 0; layerIndex--)
             {
                 NeuronLayer hiddenLayer = HiddenLayers[layerIndex];
-                for (int nIndex = 0; nIndex < hiddenLayer.NeuronsCount; nIndex++)
-                    hiddenLayer.Neurons[nIndex].UpdateWeights(LearnRate, Momentum);
+                NeuronLayer aLayer = layerIndex == 0 ? InputLayer : HiddenLayers[layerIndex - 1];
+                workSplitIndex = 0;
+                if (m_CalculateThread != null && (hiddenLayer.NeuronsCount * aLayer.NeuronsCount * 12 > CalculateThread.AmountOfComputation))
+                {
+                    workSplitIndex = hiddenLayer.NeuronsCount / 2;
+                    m_CalculateThread.SetTask(() =>
+                    {
+                        int workEndIndex = workSplitIndex;
+                        Neuron[] taskArray = hiddenLayer.Neurons;
+                        for (int index = 0; index < workEndIndex && index < taskArray.Length; index++)
+                            taskArray[index].UpdateWeights(LearnRate, Momentum);
+                    });
+                }
+                array = hiddenLayer.Neurons;
+                for (int index = workSplitIndex; index < array.Length; index++)
+                    array[index].UpdateWeights(LearnRate, Momentum);
+                if (workSplitIndex != 0)
+                    m_CalculateThread.WaitUntilFinish();
             }
-            for (int index = 0; index < OutputLayer.NeuronsCount; index++)
-                OutputLayer.Neurons[index].UpdateWeights(LearnRate, Momentum);
+            workSplitIndex = 0;
+            if (m_CalculateThread != null && (OutputLayer.NeuronsCount * HiddenLayers[HiddenLayers.Length - 1].NeuronsCount * 12 > CalculateThread.AmountOfComputation))
+            {
+                workSplitIndex = OutputLayer.NeuronsCount / 2;
+                m_CalculateThread.SetTask(() =>
+                {
+                    int workEndIndex = workSplitIndex;
+                    Neuron[] taskArray = OutputLayer.Neurons;
+                    for (int index = 0; index < workEndIndex && index < taskArray.Length; index++)
+                        taskArray[index].UpdateWeights(LearnRate, Momentum);
+                });
+            }
+            array = OutputLayer.Neurons;
+            for (int index = workSplitIndex; index < array.Length; index++)
+                array[index].UpdateWeights(LearnRate, Momentum);
+            if (workSplitIndex != 0)
+                m_CalculateThread.WaitUntilFinish();
         }
 
         /// <summary>
@@ -177,8 +281,9 @@ namespace LittleNN
         public float[] CopyEvaluation()
         {
             float[] eval = new float[OutputLayer.NeuronsCount];
-            for (int i = 0; i < OutputLayer.NeuronsCount; i++)
-                eval[i] = OutputLayer.Neurons[i].Value;
+            Neuron[] array = OutputLayer.Neurons;
+            for (int i = 0; i < array.Length; i++)
+                eval[i] = array[i].Value;
             return eval;
         }
     }

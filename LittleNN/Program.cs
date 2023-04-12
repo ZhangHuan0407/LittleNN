@@ -16,6 +16,8 @@ namespace LittleNN
             //UnitTest.SerizlizeSampleNN.IOUnitTest_CustomParameter();
             //UnitTest.ActivationFunctionUnitTest.MathUnitTest();
             //UnitTest.XorSampleNN2.ReLUUnitTest();
+            //UnitTest.MultiThreadUnitTest.ThreadFunctionUnitTest();
+
         }
     }
 }

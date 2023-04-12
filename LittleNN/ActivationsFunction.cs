@@ -14,6 +14,7 @@ namespace LittleNN
         public delegate float ActivationsFunction(ActivationsFunctionType type, float x, float parameter);
         /// <summary>
         /// Extend more custom <see cref="ActivationsFunctionType"/>, and extend <see cref="Output"/> by add delegate to <see cref="OutputExtension_Handle"/>
+        /// <para>This event will be invoke from different thread when <see cref="NeuralNetwork.SetMultiThread(true)"/></para>
         /// </summary>
         public static event ActivationsFunction OutputExtension_Handle;
         /// <summary>
@@ -75,6 +76,7 @@ namespace LittleNN
         public delegate float DerivativeFunction(ActivationsFunctionType type, float x, float parameter);
         /// <summary>
         /// Extend more custom <see cref="ActivationsFunctionType"/>, and extend <see cref="Output"/> by add delegate to <see cref="DerivativeExtension_Handle"/>
+        /// <para>This event will be invoke from different thread when <see cref="NeuralNetwork.SetMultiThread(true)"/></para>
         /// </summary>
         public static event DerivativeFunction DerivativeExtension_Handle;
         /// <summary>

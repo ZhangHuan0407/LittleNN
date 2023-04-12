@@ -90,7 +90,7 @@ namespace LittleNN
             float sum = 0f;
             for (int i = 0; i < inputSynapses.Length; i++)
             {
-                Synapse synapse = InputSynapses[i];
+                Synapse synapse = inputSynapses[i];
                 sum += synapse.Weight * synapse.InputNeuron.Value;
             }
             return Value = ActivationsFunctions.Output(layer.ActType, sum + Bias, layer.ActParameter);
@@ -110,7 +110,7 @@ namespace LittleNN
                 Synapse[] outputSynapses = OutputSynapses;
                 for (int i = 0; i < outputSynapses.Length; i++)
                 {
-                    Synapse synapse = OutputSynapses[i];
+                    Synapse synapse = outputSynapses[i];
                     loss += synapse.OutputNeuron.Gradient * synapse.Weight;
                 }
             }
@@ -128,7 +128,7 @@ namespace LittleNN
             Synapse[] inputSynapses = InputSynapses;
             for (int i = 0; i < inputSynapses.Length; i++)
             {
-                Synapse synapse = InputSynapses[i];
+                Synapse synapse = inputSynapses[i];
                 prevDelta = synapse.WeightDelta;
                 synapse.WeightDelta = learnRate * Gradient * synapse.InputNeuron.Value;
                 synapse.Weight += synapse.WeightDelta + momentum * prevDelta;
