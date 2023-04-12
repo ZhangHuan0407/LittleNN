@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace LittleNN
 {
-    public partial class NeuralNetwork
+    public sealed partial class NeuralNetwork
     {
         /// <summary>
         /// Control each learning effect.
@@ -43,6 +43,10 @@ namespace LittleNN
             InputLayer = default;
             HiddenLayers = Array.Empty<NeuronLayer>();
             OutputLayer = default;
+        }
+        ~NeuralNetwork()
+        {
+            SetMultiThread(false);
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace LittleNN
     /// <summary>
     /// Copy <see cref="NeuralNetwork"/> parameter and serialize/deserialize
     /// </summary>
-    public class NeuralNetworkModel
+    public sealed class NeuralNetworkModel
     {
         private const int CurrentVersionHeadSize = 20;
         private const int CurrentVersion = 2;
