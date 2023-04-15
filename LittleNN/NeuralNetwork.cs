@@ -144,7 +144,8 @@ namespace LittleNN
             {
                 if (m_CalculateThread != null && m_CalculateThread.IsAbort)
                     m_CalculateThread = null;
-                m_CalculateThread = m_CalculateThread ??= CalculateThread.IdleThread;
+                if (m_CalculateThread is null)
+                    m_CalculateThread = CalculateThread.IdleThread;
             }
             else
             {

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <Version>1.0.3.1</Version>
+    <Version>1.0.4</Version>
     <Description>Provide a neural network minimization implementation.
 All of the code is written in C#, and the project use the MIT LICENSE.
 Get more info from repository README.</Description>
@@ -23,6 +23,7 @@ Get more info from repository README.</Description>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageTags>non-native code, neural network, cpu</PackageTags>
+    <PackageId>LittleNN-core</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

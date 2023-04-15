@@ -9,7 +9,7 @@
 # Introduction
 ------------
 - The expectation is to provided a neural network minimization implementation.
-- TargetFramework is `net5.0`. You can modify it according to your needs.
+- TargetFramework is `.net core 1.1`. You can modify it according to your needs.
 - All of the code is written in C#, and the project use the MIT LICENSE.
 - Get more info from repository [README](https://github.com/ZhangHuan0407/LittleNN).
 - If you need faster performance, it is recommended to use other popular deep learning frameworks such as TensorFlow, PyTorch, or Keras.
