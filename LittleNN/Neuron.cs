@@ -72,7 +72,7 @@ namespace LittleNN
         /// Create a Neuron whitch in <see cref="NeuralNetwork.InputLayer"/>
 		/// <para>InputSynapses:x</para>
 		/// <para>OutputSynapses:√</para>
-        /// <param name="index">new in Neuron sequence index in outputLayer layer</param>
+        /// <param name="index">new in Neuron sequence index in inputLayer layer</param>
         /// <param name="outputLayer">new Neuron will locate in outputLayer layer</param>
         /// </summary>
 		public static Neuron CreateInputLayerNeuron(int index, NeuronLayer outputLayer)

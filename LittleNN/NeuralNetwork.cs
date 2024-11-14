@@ -138,6 +138,9 @@ namespace LittleNN
                 OutputLayer.Neurons[i] = Neuron.CreateNeuronAndConnect(i, lastNeuronsLayer, default);
         }
 
+        /// <summary>
+        /// If true: resume thread, else: revert thread
+        /// </summary>
         public void SetMultiThread(bool enable)
         {
             if (enable)
