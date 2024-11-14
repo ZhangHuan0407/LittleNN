@@ -113,13 +113,14 @@ namespace LittleNN
                     actTypes[i] = ActivationsFunctionType.Sigmoid;
             }
 
-            InputLayer = new NeuronLayer(allLayerSize[0], ActivationsFunctionType.InputLayer, null);
+            int inputLayerSize = allLayerSize[0];
+            InputLayer = new NeuronLayer(inputLayerSize, ActivationsFunctionType.InputLayer, null);
             HiddenLayers = new NeuronLayer[layerCount - 2];
             for (int i = 0; i < layerCount - 2; i++)
                 HiddenLayers[i] = new NeuronLayer(allLayerSize[i + 1], actTypes[i], actParameters[i]);
             OutputLayer = new NeuronLayer(allLayerSize[layerCount - 1], actTypes[layerCount - 2], actParameters[layerCount - 2]);
 
-            for (var i = 0; i < allLayerSize[0]; i++)
+            for (var i = 0; i < inputLayerSize; i++)
                 InputLayer.Neurons[i] = Neuron.CreateInputLayerNeuron(i, HiddenLayers[0]);
 
             for (var i = 0; i < layerCount - 2; i++)
